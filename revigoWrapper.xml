@@ -1,0 +1,29 @@
+<tool id="revigo-data-prep" name="Prepare Data for REVIGO" version="0.1">
+    <description>Cut columns from tabular data and define as REVIGO datatype.</description>
+    <command>
+    awk 'BEGIN {OFS = "\t"} { print \$goTermsCol,\$numberCol }' 
+        goTermsCol=$goTermsCol numberCol=$numberCol 
+        $input > $out_file1
+    </command>
+    <inputs>
+        <param format="tabular" name="input" type="data" label="Input Dataset" />
+        <param name="goTermsCol"
+            type="data_column"
+            data_ref="input"
+            value="1"
+            accept_default="true"
+            label="Select Column of GO Terms" />
+        <param name="numberCol" 
+            type="data_column" 
+            data_ref="input"
+            value="2" 
+            accept_default="true" 
+            label="Select Column of p-values, etc." />
+    </inputs>
+    <outputs>
+        <data format="revigo" name="out_file1" metadata_source="input"/>
+    </outputs>
+    <help>
+Prepare data for REVIGO
+    </help>
+</tool>
