@@ -1,9 +1,17 @@
 <tool id="revigo-data-prep" name="Prepare Data for REVIGO" version="0.1">
     <description>Cut columns from tabular data and define as REVIGO datatype.</description>
     <command>
-    awk 'BEGIN {OFS = "\t"} { print \$goTermsCol,\$numberCol }' 
-        goTermsCol=$goTermsCol numberCol=$numberCol 
-        $input > $out_file1
+    #if $include_numeric == "yes":
+         awk 
+            'BEGIN {OFS = "\t"} { print \$goTermsCol,\$numberCol}' 
+            goTermsCol=$goTermsCol 
+            numberCol=$include_numeric.numberCol 
+            $input > $out_file1
+    #else  
+        awk 'BEGIN {OFS = "\t"} { print \$goTermsCol}' 
+            goTermsCol=$goTermsCol 
+            $input > $out_file1
+    #end if
     </command>
     <inputs>
         <param format="tabular" name="input" type="data" label="Input Dataset" />
@@ -13,16 +21,37 @@
             value="1"
             accept_default="true"
             label="Select Column of GO Terms" />
-        <param name="numberCol" 
-            type="data_column" 
-            data_ref="input"
-            value="2" 
-            accept_default="true" 
-            label="Select Column of p-values, etc." />
+        <conditional name="include_numeric">
+            <param name="include_numeric_column" type="select" label="Include measures of enrichment?">
+                <option value="no" selected="true">No</option>
+                <option value="yes">Yes</option>
+            </param>
+            <when value="no">
+            </when>
+            <when value="yes">
+                <param name="numberCol" 
+                    type="data_column" 
+                    data_ref="input"
+                    value="2" 
+                    accept_default="true" 
+                    label="Select Column of p-values, etc." />
+            </when>
+        </conditional>
     </inputs>
     <outputs>
-        <data format="revigo" name="out_file1" metadata_source="input"/>
+        <data format="revigo" 
+            name="out_file1" 
+            metadata_source="input" 
+            label="Prepare ${on_string} for REVIGO"/>
     </outputs>
+    <tests>
+        <test>
+            <param name="input" value="test.tab" ftype="tabular" />
+            <param name="goTermsCol" value="1"/>
+            <param name="include_numeric_column" value="no"/>
+            <output name="out_file1" file="test1.out" ftype="tabular"/>
+        </test>
+    </test>
     <help>
 Prepare data for REVIGO
     </help>
