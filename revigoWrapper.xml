@@ -1,14 +1,14 @@
 <tool id="revigo-data-prep" name="Prepare Data for REVIGO" version="0.1">
     <description>Cut columns from tabular data and define as REVIGO datatype.</description>
     <command>
-    #if $include_numeric == "yes":
+    #if ($include_numeric.include_numeric_column == "yes"):
          awk 
-            'BEGIN {OFS = "\t"} { print \$goTermsCol,\$numberCol}' 
-            goTermsCol=$goTermsCol 
-            numberCol=$include_numeric.numberCol 
+            '{ print \$goTermsCol"\t"\$numberCol}'
+            goTermsCol=$goTermsCol
+            numberCol=$include_numeric.numberCol
             $input > $out_file1
     #else  
-        awk 'BEGIN {OFS = "\t"} { print \$goTermsCol}' 
+        awk '{ print \$goTermsCol}' 
             goTermsCol=$goTermsCol 
             $input > $out_file1
     #end if
@@ -48,11 +48,27 @@
         <test>
             <param name="input" value="test.tab" ftype="tabular" />
             <param name="goTermsCol" value="1"/>
-            <param name="include_numeric_column" value="no"/>
-            <output name="out_file1" file="test1.out" ftype="tabular"/>
+            <param name="include_numeric_column" value="yes"/>
+            <param name="numberCol" value="3"/>
+            <output name="out_file1" file="test1.out" ftype="revigo"/>
         </test>
-    </test>
+        <test>
+            <param name="input" value="test.tab" ftype="tabular" />
+            <param name="goTermsCol" value="1"/>
+            <param name="include_numeric_column" value="no"/>
+            <output name="out_file1" file="test2.out" ftype="revigo"/>
+        </test>
+    </tests>
     <help>
 Prepare data for REVIGO
     </help>
+    <citations>
+        <citation type="bibtex">
+            @misc{REVIGOtool,
+            author = {Caleb Easterly},
+            date = {22 Sept 2017},
+            title = {REVIGO Data Prep Tool}
+            }
+        </citation>
+    </citations>
 </tool>
