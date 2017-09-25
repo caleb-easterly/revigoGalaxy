@@ -1,0 +1,7 @@
+name: prepare_revigo
+owner: galaxyp
+description: cut columns from tabular data and define as the revigo datatype
+type: unrestricted
+categories: 
+    - "Visualization"
+    - "Proteomics"  
