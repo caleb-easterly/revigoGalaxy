@@ -1,5 +1,5 @@
 name: prepare_revigo
-owner: galaxyp
+owner: caleb-easterly 
 description: cut columns from tabular data and define as the revigo datatype
 type: unrestricted
 categories: 
