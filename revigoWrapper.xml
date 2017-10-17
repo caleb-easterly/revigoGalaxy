@@ -37,6 +37,16 @@
                     label="Select Column of p-values, etc." />
             </when>
         </conditional>
+        <conditional name="comments" type="boolean" checked="false" label="Ignore comments?"/>
+            <when value="false">
+                <!-- do nothing -->
+            </when>
+            <when value="true">
+                <param name="char" type="select" label="Select the comment character" />
+                </param>
+            </when>
+        </conditional>
+        <param name="blanks" type="boolean" checked="false" label="Skip blank lines?" />
     </inputs>
     <outputs>
         <data format="revigo" 
