@@ -1,18 +1,26 @@
 <tool id="revigo-data-prep" name="Prepare Data for REVIGO" version="0.1">
     <description>Cut columns from tabular data and define as REVIGO datatype.</description>
-    <command>
-    #if ($include_numeric.include_numeric_column == "yes"):
+    <command><![CDATA[
+    #if $comments:
+		#if ($comments.char == "#"):
+			awk 'NF && $1!~/^#/' $input |
+		#end if
+		#if ($comments.char == "//"):
+			awk 'NF && $1!~/^\/\//'	$input |
+		#end if
+	#else
+		awk '{ print }' $input |
+	#end if
+	#if ($include_numeric.include_numeric_column == "yes"):
          awk 
             '{ print \$goTermsCol"\t"\$numberCol}'
             goTermsCol=$goTermsCol
-            numberCol=$include_numeric.numberCol
-            $input > $out_file1
+            numberCol=$include_numeric.numberCol > $out_file1
     #else  
         awk '{ print \$goTermsCol}' 
-            goTermsCol=$goTermsCol 
-            $input > $out_file1
+            goTermsCol=$goTermsCol > $out_file1
     #end if
-    </command>
+    ]]></command>
     <inputs>
         <param format="tabular" name="input" type="data" label="Input Dataset" />
         <param name="goTermsCol"
@@ -37,16 +45,20 @@
                     label="Select Column of p-values, etc." />
             </when>
         </conditional>
-        <conditional name="comments" type="boolean" checked="false" label="Ignore comments?"/>
-            <when value="false">
+        <conditional name="comments">
+            <param name="ignore_comments" type="boolean" checked="false"
+				label="Ignore comments?"
+				help="Also removes blank lines, which won't affect REVIGO results"/>
+			<when value="false">
                 <!-- do nothing -->
             </when>
             <when value="true">
-                <param name="char" type="select" label="Select the comment character" />
+                <param name="char" type="select" label="Select the comment character">
+					<option value="#">#</option>
+					<option value="//">//</option>
                 </param>
             </when>
         </conditional>
-        <param name="blanks" type="boolean" checked="false" label="Skip blank lines?" />
     </inputs>
     <outputs>
         <data format="revigo" 
@@ -69,9 +81,18 @@
             <output name="out_file1" file="test2.out" ftype="revigo"/>
         </test>
     </tests>
-    <help>
-Prepare data for REVIGO
-    </help>
+    <help><![CDATA[
+Prepare data for the `REduce and VIsualize Gene Ontology (REVIGO) tool <http://revigo.irb.hr>`_.
+
+This tool allows the user to select up to two columns from a 
+tabular dataset, a column of Gene Ontology (GO) terms and a 
+column of p-values or other numerical values.
+
+Then, the tool defines the data as the 'revigo' datatype, 
+which makes the REVIGO visualization appear in the Visualizations 
+drop-down menu (the bar chart) in a history item.
+This will paste the desired data into the text field on the REVIGO website. 
+    ]]></help>
     <citations>
         <citation type="bibtex">
             @misc{REVIGOtool,
