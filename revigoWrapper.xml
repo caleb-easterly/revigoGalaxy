@@ -1,7 +1,7 @@
 <tool id="revigo-data-prep" name="Prepare Data for REVIGO" version="0.1">
     <description>Cut columns from tabular data and define as REVIGO datatype.</description>
     <command><![CDATA[
-    #if $comments:
+    #if $comments.ignore_comments:
 		#if ($comments.char == "#"):
 			awk 'NF && $1!~/^#/' $input |
 		#end if
