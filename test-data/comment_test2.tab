@@ -1,0 +1,5 @@
+#goterm pval
+GO:123	0.001
+
+GO:456	0.002
+#end test
