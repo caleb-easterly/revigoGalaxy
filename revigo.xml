@@ -80,6 +80,14 @@
             <param name="include_numeric_column" value="no"/>
             <output name="out_file1" file="test2.out" ftype="revigo"/>
         </test>
+        <test>
+            <param name="input" value="comment_test.tab" ftype="tabular" />
+            <param name="goTermsCol" value="1"/>
+            <param name="include_numeric_column" value="yes"/>
+            <param name="ignore_comments" value="true" />
+            <param name="char" value="//"/>
+            <output name="out_file1" file="comment_test.out" ftype="revigo"/>
+        </test>
     </tests>
     <help><![CDATA[
 Prepare data for the `REduce and VIsualize Gene Ontology (REVIGO) tool <http://revigo.irb.hr>`_.

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<datatypes>
+    <datatype_files>
+    </datatype_files>
+    <registration>
+        <datatype extension="revigo" type="galaxy.datatypes.tabular:Tabular" subclass="true"/>
+    </registration>
+    <sniffers>
+    </sniffers>
+</datatypes>
