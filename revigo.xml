@@ -1,24 +1,25 @@
 <tool id="revigo-data-prep" name="Prepare Data for REVIGO" version="0.1">
     <description>Cut columns from tabular data and define as REVIGO datatype.</description>
-    <command><![CDATA[
-    #if $comments.ignore_comments:
-		#if ($comments.char == "#"):
-			awk 'NF && $1!~/^#/' $input |
-		#end if
-		#if ($comments.char == "//"):
-			awk 'NF && $1!~/^\/\//'	$input |
-		#end if
+    <command detect_errors="aggressive"><![CDATA[
+    #if ($comments.ignore_comments == "yes"):
+		#if (str($comments.comment_char) == "0"):
+			grep -v '^[[:space:]]*#' $input > ./newinput.tab &&
+		#else if (str($comments.comment_char) == "1"):
+		    grep -v '^[[:space:]]*\/\/' $input > ./newinput.tab &&
+        #else
+            echo "wrong comment char!"; exit 1
+        #end if
 	#else
-		awk '{ print }' $input |
+		cat $input > ./newinput.tab &&
 	#end if
 	#if ($include_numeric.include_numeric_column == "yes"):
          awk 
             '{ print \$goTermsCol"\t"\$numberCol}'
             goTermsCol=$goTermsCol
-            numberCol=$include_numeric.numberCol > $out_file1
-    #else  
+            numberCol=$include_numeric.numberCol ./newinput.tab > $out_file1
+    #else
         awk '{ print \$goTermsCol}' 
-            goTermsCol=$goTermsCol > $out_file1
+            goTermsCol=$goTermsCol ./newinput.tab > $out_file1
     #end if
     ]]></command>
     <inputs>
@@ -46,24 +47,26 @@
             </when>
         </conditional>
         <conditional name="comments">
-            <param name="ignore_comments" type="boolean" checked="false"
-				label="Ignore comments?"
-				help="Also removes blank lines, which won't affect REVIGO results"/>
-			<when value="false">
+            <param name="ignore_comments" type="select"
+				label="Ignore comments?">
+                <option value="no" selected="true">No</option>
+                <option value="yes">Yes</option>
+            </param>
+			<when value="no">
                 <!-- do nothing -->
             </when>
-            <when value="true">
-                <param name="char" type="select" label="Select the comment character">
-					<option value="#">#</option>
-					<option value="//">//</option>
+            <when value="yes">
+                <param name="comment_char" type="select" label="Select the comment character">
+					<option value="0">#</option>
+					<option value="1">//</option>
                 </param>
             </when>
         </conditional>
     </inputs>
     <outputs>
-        <data format="revigo" 
-            name="out_file1" 
-            metadata_source="input" 
+        <data format="revigo"
+            name="out_file1"
+            metadata_source="input"
             label="Prepare ${on_string} for REVIGO"/>
     </outputs>
     <tests>
@@ -84,8 +87,10 @@
             <param name="input" value="comment_test.tab" ftype="tabular" />
             <param name="goTermsCol" value="1"/>
             <param name="include_numeric_column" value="yes"/>
-            <param name="ignore_comments" value="true" />
-            <param name="char" value="#"/>
+            <conditional name="comments">
+                <param name="ignore_comments" value="yes" />
+                <param name="comment_char" value="0"/>
+            </conditional>
             <output name="out_file1" file="comment_test.out" ftype="revigo"/>
         </test>
     </tests>
